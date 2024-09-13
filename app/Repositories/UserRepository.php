@@ -8,6 +8,15 @@ use App\Repositories\Repository;
 
 final class UserRepository extends Repository
 {
+    public function index(): array
+    {
+        $sql = 'SELECT * FROM users';
+
+        $statement = $this->pdo->query($sql);
+
+        return $statement->fetchAll();
+    }
+
     public function store(UserCreateDto $data): bool
     {
         $sql = 'INSERT INTO users (uuid, first_name, last_name) VALUES (:uuid, :first_name, :last_name)';
