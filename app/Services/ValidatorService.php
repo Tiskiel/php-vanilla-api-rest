@@ -67,4 +67,33 @@ final class ValidatorService
 
         return $errors;
     }
+
+    /**
+     * @return array<string, string>|bool
+     */
+    public function unique(string $table, string $column, string $value): array|bool
+    {
+        /**
+         * @var array<string, string>
+         */
+        $errors = [];
+
+        if (!in_array($table, $this->allowedTables)) {
+            $errors['table'] = 'Table not allowed';
+        }
+
+        if (!in_array($column, $this->allowedColumns[$table])) {
+            $errors['column'] = 'Column not allowed';
+        }
+
+        if ($this->_repository->unique($table, $column, $value)) {
+            $errors[$column] = 'Value already exists';
+        }
+
+        if(!empty($errors)) {
+            return $errors;
+        }
+
+        return $this->_repository->unique($table, $column, $value);
+    }
 }
