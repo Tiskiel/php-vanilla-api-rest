@@ -19,8 +19,8 @@ $this->pdo = $pdo;
 
 pest()->extend(TestCase::class)->beforeEach(function() use($pdo) {
     $this->pdo = $pdo;
-})->afterAll(function() use($pdo) {
-    $pdo->rollBack();
+})->afterEach(function() {
+    refreshTable('users', true);
 })
 ->in('Feature');
 
