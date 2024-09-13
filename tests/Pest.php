@@ -1,5 +1,12 @@
 <?php
 
+use Database\Database;
+use Tests\TestCase;
+
+$database = new Database();
+$database->connection(true);
+$pdo = $database->getPdo();
+
 /*
 |--------------------------------------------------------------------------
 | Test Case
@@ -11,7 +18,12 @@
 |
 */
 
-// pest()->extend(Tests\TestCase::class)->in('Feature');
+pest()->extend(TestCase::class)->beforeEach(function() use($pdo) {
+    $this->pdo = $pdo;
+})->afterAll(function() use($pdo) {
+    $pdo->rollBack();
+})
+->in('Feature');
 
 /*
 |--------------------------------------------------------------------------
