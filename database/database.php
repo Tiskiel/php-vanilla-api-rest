@@ -16,7 +16,6 @@ final class Database
     private function __construct()
     {
         $this->config = require __DIR__ . '/../config/database.php';
-        $this->connection();
     }
 
     public static function getInstance(): self
@@ -38,7 +37,7 @@ final class Database
         $this->isTest = $isTest;
     }
 
-    private function connection(): void
+    public function connection(): void
     {
         $dbName = $this->isTest ? $this->config['db_test_database'] : $this->config['db_database'];
 

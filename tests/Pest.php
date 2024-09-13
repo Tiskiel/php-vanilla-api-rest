@@ -1,11 +1,10 @@
 <?php
 
+
+
 use Tests\TestCase;
 
-$database = database(true);
-$pdo = $database->getPdo();
-$this->pdo = $pdo;
-
+$pdo = testPDO();
 /*
 |--------------------------------------------------------------------------
 | Test Case
@@ -19,8 +18,8 @@ $this->pdo = $pdo;
 
 pest()->extend(TestCase::class)->beforeEach(function() use($pdo) {
     $this->pdo = $pdo;
-})->afterEach(function() {
-    refreshTable('users', true);
+})->afterEach(function() use($pdo) {
+    refreshTable('users', true, $pdo);
 })
 ->in('Feature');
 
