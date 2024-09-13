@@ -6,6 +6,7 @@ use Tests\TestCase;
 $database = new Database();
 $database->connection(true);
 $pdo = $database->getPdo();
+$this->pdo = $pdo;
 
 /*
 |--------------------------------------------------------------------------

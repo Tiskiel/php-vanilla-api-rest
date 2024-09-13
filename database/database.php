@@ -39,4 +39,10 @@ final class Database
             Json::response(['error' => $e->getMessage()], 500);
         }
     }
+
+    public function disconnect(): void
+    {
+        $this->pdo = null;
+        echo 'Disconnected from the database successfully';
+    }
 }
