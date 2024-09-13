@@ -2,6 +2,7 @@
 
 use App\Dto\UserCreateDto;
 use App\Repositories\UserRepository;
+use App\Services\UserService;
 
 beforeEach(function () {
     $this->userDto = new UserCreateDto('John', 'Doe');
@@ -17,4 +18,32 @@ it('should delete a user', function () {
     $user = $statement->fetch(\PDO::FETCH_OBJ);
 
     expect($user)->toBeFalse();
+});
+
+it('should not delete a user that does not exist', function () {
+    expect($this->repository->delete('non-existent-uuid'))->toBeFalse();
+});
+
+it('should delete a user via the service', function () {
+    $service = new UserService($this->pdo);
+
+    $service->delete($this->userDto->getUuid());
+
+    $statement = $this->pdo->prepare('SELECT uuid, first_name, last_name FROM users WHERE uuid = :uuid');
+    $statement->execute([':uuid' => $this->userDto->getUuid()]);
+    $user = $statement->fetch(\PDO::FETCH_OBJ);
+
+    expect($user)->toBeFalse();
+});
+
+it('should not delete a user that does not exist via the service', function () {
+    $service = new UserService($this->pdo);
+
+    expect($service->delete('non-existent-uuid'))->toBeFalse();
+});
+
+it('is protected from injection', function () {
+    $service = new UserService($this->pdo);
+
+    expect($service->delete('DROP TABLE users'))->toBeFalse();
 });
