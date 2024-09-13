@@ -8,12 +8,24 @@ use PDOException;
 
 final class Database
 {
+    private static ?Database $instance = null;
     private ?PDO $pdo = null;
     private array $config;
+    private bool $isTest = false;
 
-    public function __construct()
+    private function __construct()
     {
         $this->config = require __DIR__ . '/../config/database.php';
+        $this->connection();
+    }
+
+    public static function getInstance(): self
+    {
+        if (self::$instance === null) {
+            self::$instance = new Database();
+        }
+
+        return self::$instance;
     }
 
     public function getPdo(): ?PDO
@@ -21,9 +33,14 @@ final class Database
         return $this->pdo;
     }
 
-    public function connection(bool $isTest = false): void
+    public function setIsTest(bool $isTest): void
     {
-        $dbName = $isTest ? $this->config['db_test_database'] : $this->config['db_database'];
+        $this->isTest = $isTest;
+    }
+
+    private function connection(): void
+    {
+        $dbName = $this->isTest ? $this->config['db_test_database'] : $this->config['db_database'];
 
         try {
             $this->pdo = new PDO(

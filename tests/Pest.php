@@ -1,10 +1,8 @@
 <?php
 
-use Database\Database;
 use Tests\TestCase;
 
-$database = new Database();
-$database->connection(true);
+$database = database(true);
 $pdo = $database->getPdo();
 $this->pdo = $pdo;
 

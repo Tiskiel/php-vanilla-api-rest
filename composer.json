@@ -9,7 +9,8 @@
             "Tests\\": "tests/"
         },
         "files": [
-            "bootstrap/helpers.php"
+            "bootstrap/helpers.php",
+            "bootstrap/global.php"
         ]
     },
     "authors": [
