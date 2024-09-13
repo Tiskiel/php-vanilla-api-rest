@@ -3,7 +3,6 @@
 namespace App\Repositories;
 
 use App\Dto\UserCreateDto;
-use App\Dto\UserUpdateDto;
 use App\Repositories\Repository;
 
 final class UserRepository extends Repository
