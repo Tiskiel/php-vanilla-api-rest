@@ -2,15 +2,12 @@
 
 namespace App\Repositories;
 
-use Database\Database;
-
 abstract class Repository
 {
-    protected \PDO $pdo;
-
     public function __construct(
+        protected ?\PDO $pdo = null
     )
     {
-        $this->pdo = database()->getPdo();
+        $this->pdo =  $pdo ?? database()->getPdo();
     }
 }
