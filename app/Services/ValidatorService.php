@@ -46,4 +46,25 @@ final class ValidatorService
 
         return $this->_repository->exist($table, $column, $value);
     }
+
+    /**
+     * @return array<string, string>
+     */
+    public function validateNames(string $firstName, string $lastName): array
+    {
+        /**
+         * @var array<string, string>
+         */
+        $errors = [];
+
+        if (!$firstName) {
+            $errors['first_name'] = 'First name is required';
+        }
+
+        if (empty($lastName)) {
+            $errors['last_name'] = 'Last name is required';
+        }
+
+        return $errors;
+    }
 }
