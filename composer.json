@@ -29,7 +29,8 @@
     },
     "scripts": {
         "test": "./vendor/bin/pest",
-        "users:migrate": "php database/migrations/create_users_table.php"
+        "users:migrate": "php database/migrations/create_users_table.php && php database/migrations/create_users_table_test_db.php",
+        "users:migrate:test": "php database/migrations/create_users_table_test_db.php"
     },
     "require": {
         "vlucas/phpdotenv": "^5.6",

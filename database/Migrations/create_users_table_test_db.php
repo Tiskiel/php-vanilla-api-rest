@@ -12,9 +12,8 @@ $columns = [
     'updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP',
 ];
 
-
-$database = database();
-$database->connection();
-$schema = new Schema($database->getPdo());
-$schema->createTable('users', $columns);
-$database->disconnect();
+$databaseTest = database(true);
+$databaseTest->connection();
+$schemaTest = new Schema($databaseTest->getPdo());
+$schemaTest->createTable('users', $columns);
+$databaseTest->disconnect();
