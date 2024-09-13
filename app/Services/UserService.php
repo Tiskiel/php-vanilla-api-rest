@@ -31,17 +31,33 @@ final class UserService
         return $this->_repository->index();
     }
 
-    public function store(string $firstName, string $lastName): bool
+    /**
+     * @return array<string, string>|bool
+     */
+    public function store(string $firstName, string $lastName): array|bool
     {
+        //! TODO: create test for this
+        if(isEmpty($this->_validatorService->validateNames($firstName, $lastName))) {
+            $this->errors = array_merge($this->errors, $this->_validatorService->validateNames($firstName, $lastName));
+        }
+
+        if(is_array($this->_validatorService->unique('users', 'first_name', $firstName))) {
+            $this->errors['first_name'] = 'First name already exists';
+        }
+
+        if(!empty($this->errors)) {
+            return $this->errors;
+        }
+
         $dto = new UserCreateDto($firstName, $lastName);
 
         return $this->_repository->store($dto);
     }
 
     /**
-     * @return array<string, string>
+     * @return array<string, string>|bool
      */
-    public function update(string $uuid, string $firstName, string $lastName): array
+    public function update(string $uuid, string $firstName, string $lastName): array|bool
     {
         try {
             if(!$this->_validatorService->exist('users', 'uuid', $uuid)) {
@@ -58,7 +74,7 @@ final class UserService
 
             $dto = new UserUpdateDto($uuid, $firstName, $lastName);
 
-             return $this->_repository->update($dto);
+            return $this->_repository->update($dto);
         } catch (\Throwable $th) {
             $this->errors['exception'] = 'An error occurred';
 
@@ -67,9 +83,9 @@ final class UserService
     }
 
     /**
-     * @return array<string, string>
+     * @return array<string, string>|bool
      */
-    public function delete(string $uuid): array
+    public function delete(string $uuid): array|bool
     {
         try {
             if(!$this->_validatorService->exist('users', 'uuid', $uuid)) {
