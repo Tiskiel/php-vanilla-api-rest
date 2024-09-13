@@ -1,0 +1,19 @@
+{
+    "name": "jf/test-eonix",
+    "description": "This is the test for the Eonix society",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/",
+            "Database\\Factories\\": "database/factories/",
+            "Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Wanty Jean-François",
+            "email": "wanty.jf@gmail.com"
+        }
+    ],
+    "require": {}
+}
