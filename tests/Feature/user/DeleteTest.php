@@ -39,11 +39,19 @@ it('should delete a user via the service', function () {
 it('should not delete a user that does not exist via the service', function () {
     $service = new UserService($this->pdo);
 
-    expect($service->delete('non-existent-uuid'))->toBeFalse();
+    expect($service->delete('non-existent-uuid'))->toBeArray();
 });
 
 it('is protected from injection', function () {
     $service = new UserService($this->pdo);
 
-    expect($service->delete('DROP TABLE users'))->toBeFalse();
+    expect($service->delete('DROP TABLE users'))->toBeArray();
+});
+
+it('is return an array with errors', function () {
+    $service = new UserService($this->pdo);
+    $errors = $service->delete('non-existent-uuid');
+
+    expect($errors)->toBeArray();
+    expect($errors['uuid'])->toBe('User not found');
 });
