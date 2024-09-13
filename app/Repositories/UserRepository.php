@@ -37,4 +37,15 @@ final class UserRepository extends Repository
 
         return $statement->rowCount() > 0;
     }
+
+    public function delete(string $uuid): bool
+    {
+        $sql = 'DELETE FROM users WHERE uuid = :uuid';
+
+        $statement = $this->pdo->prepare($sql);
+
+        $statement->execute([':uuid' => $uuid]);
+
+        return $statement->rowCount() > 0;
+    }
 }
