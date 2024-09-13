@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Dto\User;
+namespace App\Dto;
 
 use Ramsey\Uuid\Uuid;
 
