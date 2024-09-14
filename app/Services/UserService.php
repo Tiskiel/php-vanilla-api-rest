@@ -24,8 +24,38 @@ final class UserService
         $this->_validatorService = $this->pdo ? new ValidatorService($this->pdo) : new ValidatorService();
     }
 
+    /**
+     * @return array<string, string>
+     */
     public function index(?string $firstName = null, ?string $lastName = null): array
     {
+        /**
+         * @var array<string, string>
+         */
+        $names = $firstName && $lastName ? [
+            'first_name' => $firstName,
+            'last_name' => $lastName
+        ] : [];
+
+        /**
+         * @var bool|array<string, string>
+         */
+        $prepareNames = false;
+
+        if(!empty($names)) {
+            $prepareNames = $this->_validatorService->prepareNames($names);
+        } elseif ($firstName && !$lastName) {
+            $prepareNames = $this->_validatorService->prepareNames($firstName);
+        } else {
+            $prepareNames = $this->_validatorService->prepareNames($lastName);
+        }
+
+        if(is_array($prepareNames) && array_key_exists('error', $prepareNames)) {
+            $this->errors = array_merge($this->errors, $prepareNames);
+
+            return $this->errors;
+        }
+
         return $this->_repository->index($firstName, $lastName);
     }
 

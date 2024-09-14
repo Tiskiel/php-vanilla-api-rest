@@ -96,4 +96,46 @@ final class ValidatorService
 
         return $this->_repository->unique($table, $column, $value);
     }
+
+    /**
+     * This method prepares the names for the user
+     * and prevent SQL injection attacks.
+     *
+     * @return bool|array<string, string>
+     * @param string|array<string, string> $value
+     */
+    public function prepareNames(string|array $data): bool|array
+    {
+        /**
+         * @var array<string, string>
+         */
+        $errors = [];
+
+        if(is_array($data)) {
+            foreach ($data as $key => $string) {
+                trim($string);
+
+                if(! preg_match('/^[a-zA-Z\s-]+$/', $string)) {
+                    $errors['error'] = 'Invalid value';
+                    break;
+                } else {
+                    $data[$key] = $string;
+                }
+            }
+        } else {
+            trim($data);
+
+            if(! preg_match('/^[a-zA-Z\s-]+$/', $data)) {
+                $errors['error'] = 'Invalid value';
+            } else {
+                $data = $data;
+            }
+        }
+
+        if(!empty($errors)) {
+            return $errors;
+        }
+
+        return $data;
+    }
 }
