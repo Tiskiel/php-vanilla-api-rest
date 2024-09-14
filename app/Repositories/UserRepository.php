@@ -20,9 +20,19 @@ final class UserRepository extends Repository
             $sql .= ' WHERE last_name ILIKE :last_name';
         }
 
-        $statement = $this->pdo->query($sql);
+        $statement = $this->pdo->prepare($sql);
 
-        return $statement->fetchAll();
+        if ($first_name && $last_name) {
+            $statement->execute([':first_name' => "%$first_name%", ':last_name' => "%$last_name%"]);
+        } elseif ($first_name) {
+            $statement->execute([':first_name' => "%$first_name%"]);
+        } elseif ($last_name) {
+            $statement->execute([':last_name' => "%$last_name%"]);
+        } else {
+            $statement->execute();
+        }
+
+        return $statement->fetchAll(\PDO::FETCH_ASSOC);
     }
 
     public function store(UserCreateDto $data): bool

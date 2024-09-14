@@ -26,7 +26,7 @@ final class UserService
 
     public function index(?string $firstName = null, ?string $lastName = null): array
     {
-        return $this->_repository->index();
+        return $this->_repository->index($firstName, $lastName);
     }
 
     /**
