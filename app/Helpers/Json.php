@@ -9,11 +9,10 @@ final class Json
      *
      * @param array<string, mixed> $data
      */
-    public static function response(array $data, int $status = 200): void
+    public static function response(array $data, int $status = 200): string
     {
         http_response_code($status);
         header('Content-Type: application/json');
-        echo json_encode($data);
-        exit();
+        return json_encode($data);
     }
 }
