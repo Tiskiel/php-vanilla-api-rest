@@ -5,9 +5,6 @@ namespace App\Services;
 use App\Dto\UserCreateDto;
 use App\Dto\UserUpdateDto;
 use App\Repositories\UserRepository;
-use PHPUnit\Framework\Constraint\IsEmpty;
-
-use function PHPUnit\Framework\isEmpty;
 
 final class UserService
 {
