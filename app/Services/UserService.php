@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Dto\UserCreateDto;
 use App\Dto\UserUpdateDto;
 use App\Repositories\UserRepository;
+use PHPUnit\Framework\Constraint\IsEmpty;
 
 use function PHPUnit\Framework\isEmpty;
 
@@ -36,20 +37,19 @@ final class UserService
      */
     public function store(string $firstName, string $lastName): array|bool
     {
-        //! TODO: create test for this
-        if(isEmpty($this->_validatorService->validateNames($firstName, $lastName))) {
+        if(!empty($this->_validatorService->validateNames($firstName, $lastName))) {
             $this->errors = array_merge($this->errors, $this->_validatorService->validateNames($firstName, $lastName));
         }
 
-        if(is_array($this->_validatorService->unique('users', 'first_name', $firstName))) {
-            $this->errors['first_name'] = 'First name already exists';
+        $dto = new UserCreateDto($firstName, $lastName);
+
+        if(is_array($this->_validatorService->unique('users', 'uuid', $dto->getUuid()))) {
+            $this->errors = array_merge($this->errors, $this->_validatorService->unique('users', 'uuid', $dto->getUuid()));
         }
 
         if(!empty($this->errors)) {
             return $this->errors;
         }
-
-        $dto = new UserCreateDto($firstName, $lastName);
 
         return $this->_repository->store($dto);
     }
@@ -64,7 +64,7 @@ final class UserService
                 $this->errors['uuid'] = 'User not found';
             }
 
-            if(isEmpty($this->_validatorService->validateNames($firstName, $lastName))) {
+            if(!empty($this->_validatorService->validateNames($firstName, $lastName))) {
                 $this->errors = array_merge($this->errors, $this->_validatorService->validateNames($firstName, $lastName));
             }
 

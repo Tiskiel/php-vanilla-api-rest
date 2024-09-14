@@ -86,7 +86,7 @@ final class ValidatorService
             $errors['column'] = 'Column not allowed';
         }
 
-        if ($this->_repository->unique($table, $column, $value)) {
+        if (!$this->_repository->unique($table, $column, $value)) {
             $errors[$column] = 'Value already exists';
         }
 
