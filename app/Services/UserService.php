@@ -24,7 +24,7 @@ final class UserService
         $this->_validatorService = $this->pdo ? new ValidatorService($this->pdo) : new ValidatorService();
     }
 
-    public function index(string $firstName, string $lastName): array
+    public function index(?string $firstName = null, ?string $lastName = null): array
     {
         return $this->_repository->index();
     }

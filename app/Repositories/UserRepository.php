@@ -8,9 +8,17 @@ use App\Repositories\Repository;
 
 final class UserRepository extends Repository
 {
-    public function index(): array
+    public function index(?string $first_name = null, ?string $last_name = null): array
     {
         $sql = 'SELECT * FROM users';
+
+        if ($first_name && $last_name) {
+            $sql .= ' WHERE first_name ILIKE :first_name AND last_name ILIKE :last_name';
+        } elseif ($first_name) {
+            $sql .= ' WHERE first_name ILIKE :first_name';
+        } elseif ($last_name) {
+            $sql .= ' WHERE last_name ILIKE :last_name';
+        }
 
         $statement = $this->pdo->query($sql);
 
