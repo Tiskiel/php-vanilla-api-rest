@@ -1,6 +1,7 @@
 <?php
 
 use App\Dto\UserCreateDto;
+use App\Http\Controllers\UserController;
 use App\Repositories\UserRepository;
 use App\Services\UserService;
 
@@ -54,4 +55,38 @@ it('is return an array with errors', function () {
 
     expect($errors)->toBeArray();
     expect($errors['uuid'])->toBe('User not found');
+});
+
+it('is return a json response', function () {
+    $controller = new UserController($this->pdo);
+
+    $response = $controller->delete($this->userDto->getUuid());
+
+    expect($response)->toBeString();
+    expect(json_decode($response)->message)->toBe('User deleted successfully');
+});
+
+it('is return a json response with error', function () {
+    $controller = new UserController($this->pdo);
+
+    $response = $controller->delete('non-existent-uuid');
+
+    expect($response)->toBeString();
+    expect(json_decode($response)->uuid)->toBe('User not found');
+});
+
+it('is return a status code 200', function () {
+    $controller = new UserController($this->pdo);
+
+    $controller->delete($this->userDto->getUuid());
+
+    expect(http_response_code())->toBe(200);
+});
+
+it('is return a status code 404', function () {
+    $controller = new UserController($this->pdo);
+
+    $controller->delete('non-existent-uuid');
+
+    expect(http_response_code())->toBe(404);
 });
