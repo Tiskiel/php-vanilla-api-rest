@@ -47,7 +47,7 @@ final class UserService
             $prepareNames = $this->_validatorService->prepareNames($names);
         } elseif ($firstName && !$lastName) {
             $prepareNames = $this->_validatorService->prepareNames($firstName);
-        } else {
+        } elseif (!$firstName && $lastName) {
             $prepareNames = $this->_validatorService->prepareNames($lastName);
         }
 

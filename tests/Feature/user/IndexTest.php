@@ -161,6 +161,14 @@ it('should find a user with a part of first and last name via service', function
     expect($users[0]['last_name'])->toBe('Addams');
 });
 
+it('should find all users via controller', function () {
+    $controller = new UserController($this->pdo);
+
+    $response = $controller->index();
+
+    expect(json_decode($response, true))->toHaveCount(4);
+});
+
 it('should find all users by first name via controller', function () {
     $controller = new UserController($this->pdo);
 
