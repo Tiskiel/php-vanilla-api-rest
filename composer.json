@@ -6,11 +6,13 @@
         "psr-4": {
             "App\\": "app/",
             "Database\\": "database/",
-            "Tests\\": "tests/"
+            "Tests\\": "tests/",
+            "Routes\\": "routes/"
         },
         "files": [
             "bootstrap/helpers.php",
-            "bootstrap/global.php"
+            "bootstrap/global.php",
+            "routes/api/routes.php"
         ]
     },
     "authors": [
@@ -29,8 +31,10 @@
     },
     "scripts": {
         "test": "./vendor/bin/pest",
+        "serve": "php -S localhost:8000",
         "users:migrate": "php database/migrations/create_users_table.php && php database/migrations/create_users_table_test_db.php",
-        "users:migrate:test": "php database/migrations/create_users_table_test_db.php"
+        "users:migrate:test": "php database/migrations/create_users_table_test_db.php",
+        "users:seed": "php database/Seeders/users_seeder.php"
     },
     "require": {
         "vlucas/phpdotenv": "^5.6",
