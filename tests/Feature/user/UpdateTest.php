@@ -2,6 +2,7 @@
 
 use App\Dto\UserCreateDto;
 use App\Dto\UserUpdateDto;
+use App\Http\Controllers\UserController;
 use App\Repositories\UserRepository;
 use App\Services\UserService;
 
@@ -68,8 +69,8 @@ it('return an error when the first name is empty', function () {
     $errors = $service->update($this->userDto->getUuid(),'', 'man');
 
     expect($errors)->toBeArray();
-    expect($errors)->toHaveKey('first_name');
-    expect($errors['first_name'])->toBe('First name is required');
+    expect($errors['errors'])->toHaveKey('first_name');
+    expect($errors['errors']['first_name'])->toBe('First name is required');
 });
 
 it('return an error when the last name is empty', function () {
@@ -77,8 +78,8 @@ it('return an error when the last name is empty', function () {
     $errors = $service->update($this->userDto->getUuid(),'Bat', '');
 
     expect($errors)->toBeArray();
-    expect($errors)->toHaveKey('last_name');
-    expect($errors['last_name'])->toBe('Last name is required');
+    expect($errors['errors'])->toHaveKey('last_name');
+    expect($errors['errors']['last_name'])->toBe('Last name is required');
 });
 
 it('return an error when the first name and last name are empty', function () {
@@ -86,8 +87,101 @@ it('return an error when the first name and last name are empty', function () {
     $errors = $service->update($this->userDto->getUuid(), '', '');
 
     expect($errors)->toBeArray();
-    expect($errors)->toHaveKey('first_name');
-    expect($errors['first_name'])->toBe('First name is required');
-    expect($errors)->toHaveKey('last_name');
-    expect($errors['last_name'])->toBe('Last name is required');
+    expect($errors['errors'])->toHaveKey('first_name');
+    expect($errors['errors']['first_name'])->toBe('First name is required');
+    expect($errors['errors'])->toHaveKey('last_name');
+    expect($errors['errors']['last_name'])->toBe('Last name is required');
+});
+
+it('should update a user via the controller', function () {
+    $controller = new UserController($this->pdo);
+
+    $controller->update($this->userDto->getUuid(), 'Bat', 'Man');
+
+    $statement = $this->pdo->prepare('SELECT uuid, first_name, last_name FROM users WHERE uuid = :uuid');
+    $statement->execute([':uuid' => $this->userDto->getUuid()]);
+    $user = $statement->fetch(\PDO::FETCH_OBJ);
+
+    expect($user->uuid)->toBe($this->userDto->getUuid());
+    expect($user->first_name)->toBe('Bat');
+    expect($user->last_name)->toBe('Man');
+});
+
+it('should not update a user that does not exist via the controller', function () {
+    $controller = new UserController($this->pdo);
+
+    $controller->update('non-existent-uuid', 'Bat', 'Man');
+
+    $statement = $this->pdo->prepare('SELECT uuid, first_name, last_name FROM users WHERE uuid = :uuid');
+    $statement->execute([':uuid' => 'non-existent-uuid']);
+    $user = $statement->fetch(\PDO::FETCH_OBJ);
+
+    expect($user)->toBeFalse();
+});
+
+it('return an error when the first name is empty via the controller', function () {
+    $controller = new UserController($this->pdo);
+
+    $response = $controller->update($this->userDto->getUuid(), '', 'Man');
+
+    expect($response)->toBeString();
+    expect(json_decode($response, true)['errors'])->toHaveKey('first_name');
+    expect(json_decode($response, true)['errors']['first_name'])->toBe('First name is required');
+});
+
+it('return an error when the last name is empty via the controller', function () {
+    $controller = new UserController($this->pdo);
+
+    $response = $controller->update($this->userDto->getUuid(), 'Bat', '');
+
+    expect($response)->toBeString();
+    expect(json_decode($response, true)['errors'])->toHaveKey('last_name');
+    expect(json_decode($response, true)['errors']['last_name'])->toBe('Last name is required');
+});
+
+it('return an error when the first name and last name are empty via the controller', function () {
+    $controller = new UserController($this->pdo);
+
+    $response = $controller->update($this->userDto->getUuid(), '', '');
+
+    expect($response)->toBeString();
+    expect(json_decode($response, true)['errors'])->toHaveKey('first_name');
+    expect(json_decode($response, true)['errors']['first_name'])->toBe('First name is required');
+    expect(json_decode($response, true)['errors'])->toHaveKey('last_name');
+    expect(json_decode($response, true)['errors']['last_name'])->toBe('Last name is required');
+});
+
+it('return an error when the user does not exist via the controller', function () {
+    $controller = new UserController($this->pdo);
+
+    $response = $controller->update('non-existent-uuid', 'Bat', 'Man');
+
+    expect($response)->toBeString();
+    expect(json_decode($response, true)['errors'])->toHaveKey('uuid');
+    expect(json_decode($response, true)['errors']['uuid'])->toBe('User not found');
+});
+
+it('is return a success message when the user is updated via the controller', function () {
+    $controller = new UserController($this->pdo);
+
+    $response = $controller->update($this->userDto->getUuid(), 'Bat', 'Man');
+
+    expect($response)->toBeString();
+    expect(json_decode($response, true)['message'])->toBe('User updated successfully');
+});
+
+it('is return a status code of 200 when the user is updated via the controller', function () {
+    $controller = new UserController($this->pdo);
+
+    $controller->update($this->userDto->getUuid(), 'Bat', 'Man');
+
+    expect(http_response_code())->toBe(200);
+});
+
+it('is return a status code of 404 when the user does not exist via the controller', function () {
+    $controller = new UserController($this->pdo);
+
+    $controller->update('non-existent-uuid', 'Bat', 'Man');
+
+    expect(http_response_code())->toBe(404);
 });

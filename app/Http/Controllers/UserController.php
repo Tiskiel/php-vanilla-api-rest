@@ -16,6 +16,19 @@ final class UserController
         $this->userService = $this->pdo ? new UserService($this->pdo) : new UserService();
     }
 
+    public function update(string $uuid, string $firstName, string $lastName): string
+    {
+        $response = $this->userService->update($uuid, $firstName, $lastName);
+
+        if(is_array($response) && array_key_exists('errors', $response)) {
+            return Json::response($response, 404);
+        }
+
+        $response = ['message' => 'User updated successfully'];
+
+        return Json::response($response, 200);
+    }
+
     public function delete(string $uuid): string
     {
         $response = $this->userService->delete($uuid);
