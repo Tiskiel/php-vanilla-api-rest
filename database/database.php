@@ -49,8 +49,6 @@ final class Database
             );
 
             $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-            echo 'Connected to the database successfully';
         } catch (PDOException $e) {
             Json::response(['error' => $e->getMessage()], 500);
         }
@@ -59,6 +57,5 @@ final class Database
     public function disconnect(): void
     {
         $this->pdo = null;
-        echo 'Disconnected from the database successfully';
     }
 }
