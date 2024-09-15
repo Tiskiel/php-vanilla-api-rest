@@ -10,8 +10,9 @@ final class UserService
 {
     private UserRepository $_repository;
     private ValidatorService $_validatorService;
+
     /**
-     * @var array<string, string>
+     * @var array<string, array<string, string>>
      */
     private array $errors = [];
 
@@ -51,7 +52,7 @@ final class UserService
         }
 
         if(is_array($prepareNames) && array_key_exists('error', $prepareNames)) {
-            $this->errors = array_merge($this->errors, $prepareNames);
+            $this->errors['errors'] = array_merge($this->errors, $prepareNames);
 
             return $this->errors;
         }
@@ -60,18 +61,18 @@ final class UserService
     }
 
     /**
-     * @return array<string, string>|bool
+     * @return array<string, array<string, string>>|bool
      */
     public function store(string $firstName, string $lastName): array|bool
     {
         if(!empty($this->_validatorService->validateNames($firstName, $lastName))) {
-            $this->errors = array_merge($this->errors, $this->_validatorService->validateNames($firstName, $lastName));
+            $this->errors['errors'] = array_merge($this->errors, $this->_validatorService->validateNames($firstName, $lastName));
         }
 
         $dto = new UserCreateDto($firstName, $lastName);
 
         if(is_array($this->_validatorService->unique('users', 'uuid', $dto->getUuid()))) {
-            $this->errors = array_merge($this->errors, $this->_validatorService->unique('users', 'uuid', $dto->getUuid()));
+            $this->errors['errors'] = array_merge($this->errors, $this->_validatorService->unique('users', 'uuid', $dto->getUuid()));
         }
 
         if(!empty($this->errors)) {
