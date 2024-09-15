@@ -88,11 +88,11 @@ final class UserService
     {
         try {
             if(!$this->_validatorService->exist('users', 'uuid', $uuid)) {
-                $this->errors['uuid'] = 'User not found';
+                $this->errors['errors']['uuid'] = 'User not found';
             }
 
             if(!empty($this->_validatorService->validateNames($firstName, $lastName))) {
-                $this->errors = array_merge($this->errors, $this->_validatorService->validateNames($firstName, $lastName));
+                $this->errors['errors'] = array_merge($this->errors, $this->_validatorService->validateNames($firstName, $lastName));
             }
 
             if(!empty($this->errors)) {
