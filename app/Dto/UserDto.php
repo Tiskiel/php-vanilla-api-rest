@@ -2,7 +2,7 @@
 
 namespace App\Dto;
 
-final class UserDto
+final class UserDto extends Dto
 {
     public function __construct(
         public string $uuid,

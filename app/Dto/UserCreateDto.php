@@ -4,13 +4,13 @@ namespace App\Dto;
 
 use Ramsey\Uuid\Uuid;
 
-final class UserCreateDto
+final class UserCreateDto extends Dto
 {
-    private string $uuid;
+    protected string $uuid;
 
     public function __construct(
-        private string $first_name,
-        private string $last_name,
+        protected string $first_name,
+        protected string $last_name,
     ) {
         $this->uuid = Uuid::uuid4();
     }

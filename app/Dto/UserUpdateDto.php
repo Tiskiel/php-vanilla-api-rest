@@ -2,12 +2,12 @@
 
 namespace App\Dto;
 
-final class UserUpdateDto
+final class UserUpdateDto extends Dto
 {
     public function __construct(
-        private string $uuid,
-        private string $first_name,
-        private string $last_name,
+        protected string $uuid,
+        protected string $first_name,
+        protected string $last_name,
     ) {
     }
 
