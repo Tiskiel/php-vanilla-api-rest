@@ -286,3 +286,154 @@ it('should find all users via the router', function () {
 
     expect(json_decode($response, true))->toHaveCount(4);
 });
+
+it('should find all users by first name via the router', function () {
+    $router = new Router();
+
+    $router->addRoute('GET', '/users', function ($queryParams) {
+        $firstName = $queryParams['first_name'] ?? null;
+        $lastName = $queryParams['last_name'] ?? null;
+
+        $controller = new UserController($this->pdo);
+        return $controller->index($firstName, $lastName);
+    });
+
+    $_SERVER['REQUEST_METHOD'] = 'GET';
+    $_SERVER['REQUEST_URI'] = '/users';
+    $_GET = ['first_name' => 'Sasha'];
+
+    $response = $router->matchRoute();
+
+    expect(json_decode($response, true))->toHaveCount(1);
+    expect(json_decode($response, true)[0]['first_name'])->toBe('Sasha');
+});
+
+it('should find all users by last name via the router', function () {
+    $router = new Router();
+
+    $router->addRoute('GET', '/users', function ($queryParams) {
+        $firstName = $queryParams['first_name'] ?? null;
+        $lastName = $queryParams['last_name'] ?? null;
+
+        $controller = new UserController($this->pdo);
+        return $controller->index($firstName, $lastName);
+    });
+
+    $_SERVER['REQUEST_METHOD'] = 'GET';
+    $_SERVER['REQUEST_URI'] = '/users';
+    $_GET = ['last_name' => 'Addams'];
+
+    $response = $router->matchRoute();
+
+    expect(json_decode($response, true))->toHaveCount(2);
+    expect(json_decode($response, true)[0]['first_name'])->toBe('Morticia');
+    expect(json_decode($response, true)[1]['first_name'])->toBe('Gomez');
+});
+
+it('should find all users by first and last name via the router', function () {
+    $router = new Router();
+
+    $router->addRoute('GET', '/users', function ($queryParams) {
+        $firstName = $queryParams['first_name'] ?? null;
+        $lastName = $queryParams['last_name'] ?? null;
+
+        $controller = new UserController($this->pdo);
+        return $controller->index($firstName, $lastName);
+    });
+
+    $_SERVER['REQUEST_METHOD'] = 'GET';
+    $_SERVER['REQUEST_URI'] = '/users';
+    $_GET = ['first_name' => 'Morticia', 'last_name' => 'Addams'];
+
+    $response = $router->matchRoute();
+
+    expect(json_decode($response, true))->toHaveCount(1);
+    expect(json_decode($response, true)[0]['first_name'])->toBe('Morticia');
+    expect(json_decode($response, true)[0]['last_name'])->toBe('Addams');
+});
+
+it('should find a user with a part of first name via the router', function () {
+    $router = new Router();
+
+    $router->addRoute('GET', '/users', function ($queryParams) {
+        $firstName = $queryParams['first_name'] ?? null;
+        $lastName = $queryParams['last_name'] ?? null;
+
+        $controller = new UserController($this->pdo);
+        return $controller->index($firstName, $lastName);
+    });
+
+    $_SERVER['REQUEST_METHOD'] = 'GET';
+    $_SERVER['REQUEST_URI'] = '/users';
+    $_GET = ['first_name' => 'Ash'];
+
+    $response = $router->matchRoute();
+
+    expect(json_decode($response, true))->toHaveCount(1);
+    expect(json_decode($response, true)[0]['first_name'])->toBe('Sasha');
+});
+
+it('should find a user with a part of last name via the router', function () {
+    $router = new Router();
+
+    $router->addRoute('GET', '/users', function ($queryParams) {
+        $firstName = $queryParams['first_name'] ?? null;
+        $lastName = $queryParams['last_name'] ?? null;
+
+        $controller = new UserController($this->pdo);
+        return $controller->index($firstName, $lastName);
+    });
+
+    $_SERVER['REQUEST_METHOD'] = 'GET';
+    $_SERVER['REQUEST_URI'] = '/users';
+    $_GET = ['last_name' => 'Adda'];
+
+    $response = $router->matchRoute();
+
+    expect(json_decode($response, true))->toHaveCount(2);
+    expect(json_decode($response, true)[0]['last_name'])->toBe('Addams');
+    expect(json_decode($response, true)[1]['last_name'])->toBe('Addams');
+});
+
+it('should find a user with a part of first and last name via the router', function () {
+    $router = new Router();
+
+    $router->addRoute('GET', '/users', function ($queryParams) {
+        $firstName = $queryParams['first_name'] ?? null;
+        $lastName = $queryParams['last_name'] ?? null;
+
+        $controller = new UserController($this->pdo);
+        return $controller->index($firstName, $lastName);
+    });
+
+    $_SERVER['REQUEST_METHOD'] = 'GET';
+    $_SERVER['REQUEST_URI'] = '/users';
+    $_GET = ['first_name' => 'Mort', 'last_name' => 'Adda'];
+
+    $response = $router->matchRoute();
+
+    expect(json_decode($response, true))->toHaveCount(1);
+    expect(json_decode($response, true)[0]['first_name'])->toBe('Morticia');
+    expect(json_decode($response, true)[0]['last_name'])->toBe('Addams');
+});
+
+it('should return a 404 error when user does not exist via the router', function () {
+    $router = new Router();
+
+    $router->addRoute('GET', '/users', function ($queryParams) {
+        $firstName = $queryParams['first_name'] ?? null;
+        $lastName = $queryParams['last_name'] ?? null;
+
+        $controller = new UserController($this->pdo);
+        return $controller->index($firstName, $lastName);
+    });
+
+    $_SERVER['REQUEST_METHOD'] = 'GET';
+    $_SERVER['REQUEST_URI'] = '/users';
+    $_GET = ['first_name' => 'Rory', 'last_name' => 'Williams'];
+
+    $response = $router->matchRoute();
+
+    expect(json_decode($response, true)['message'])->toBe('No users found');
+    expect(http_response_code())->toBe(404);
+});
