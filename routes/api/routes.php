@@ -7,9 +7,9 @@ header('Content-Type: application/json');
 
 $router = new Router();
 
-$router->addRoute('GET', '/users', function () {
+$router->addRoute('GET', '/users', function ($params) {
     $controller = new UserController();
-    return $controller->index();
+    return $controller->index($params['first_name'] ?? null, $params['last_name'] ?? null);
 });
 
 $router->addRoute('POST', '/users', function ($params) {
