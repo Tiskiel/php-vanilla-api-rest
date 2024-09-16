@@ -10,9 +10,9 @@
             "Routes\\": "routes/"
         },
         "files": [
-            "bootstrap/helpers.php",
             "bootstrap/global.php",
-            "routes/api/routes.php"
+            "routes/api/routes.php",
+            "bootstrap/helpers.php"
         ]
     },
     "authors": [
