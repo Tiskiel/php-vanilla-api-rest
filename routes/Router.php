@@ -19,6 +19,11 @@ final class Router
             $method = $_SERVER['REQUEST_METHOD'];
             $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
             $queryParams = $_GET;
+            $bodyParams = [];
+
+            if ($method === 'POST' || $method === 'PUT') {
+                $bodyParams = json_decode(file_get_contents('php://input'), true) ?? $_POST;
+            }
 
             if (isset($this->routes[$method])) {
                 foreach ($this->routes[$method] as $routeUrl => $target) {
@@ -29,7 +34,9 @@ final class Router
                     if (preg_match($routePattern, $uri, $matches)) {
                         array_shift($matches);
 
-                        return call_user_func_array($target, array_merge($matches, [$queryParams]));
+                        $params = $method === 'GET' ? $queryParams : $bodyParams;
+
+                        return call_user_func_array($target, array_merge($matches, [$params]));
                     }
                 }
             }
