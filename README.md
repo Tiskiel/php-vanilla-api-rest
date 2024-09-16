@@ -24,6 +24,18 @@ composer install
 composer users:migrate
 ```
 
+### 4. Run the seeder
+
+```bash
+composer users:seed
+```
+
+### 5. Run the server
+
+```bash
+composer serve
+```
+
 ### For run the test with Pest
 
 ```bash
