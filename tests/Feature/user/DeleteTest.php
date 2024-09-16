@@ -4,6 +4,7 @@ use App\Dto\UserCreateDto;
 use App\Http\Controllers\UserController;
 use App\Repositories\UserRepository;
 use App\Services\UserService;
+use Routes\Router;
 
 beforeEach(function () {
     $this->userDto = new UserCreateDto('John', 'Doe');
@@ -87,6 +88,54 @@ it('is return a status code 404', function () {
     $controller = new UserController($this->pdo);
 
     $controller->delete('non-existent-uuid');
+
+    expect(http_response_code())->toBe(404);
+});
+
+it('should delete a user via the router', function () {
+    $router = new Router();
+
+    $router->addRoute('DELETE', '/users/{uuid}', function ($uuid) {
+        $controller = new UserController($this->pdo);
+        return $controller->delete($uuid);
+    });
+
+    $_SERVER['REQUEST_METHOD'] = 'DELETE';
+    $_SERVER['REQUEST_URI'] = '/users/' . $this->userDto->getUuid();
+
+    $response = $router->matchRoute();
+
+    expect(json_decode($response, true)['message'])->toBe('User deleted successfully');
+});
+
+it('is return 200 status code when the user is deleted via the router', function () {
+    $router = new Router();
+
+    $router->addRoute('DELETE', '/users/{uuid}', function ($uuid) {
+        $controller = new UserController($this->pdo);
+        return $controller->delete($uuid);
+    });
+
+    $_SERVER['REQUEST_METHOD'] = 'DELETE';
+    $_SERVER['REQUEST_URI'] = '/users/' . $this->userDto->getUuid();
+
+    $router->matchRoute();
+
+    expect(http_response_code())->toBe(200);
+});
+
+it('is return 404 status code when the user does not exist via the router', function () {
+    $router = new Router();
+
+    $router->addRoute('DELETE', '/users/{uuid}', function ($uuid) {
+        $controller = new UserController($this->pdo);
+        return $controller->delete($uuid);
+    });
+
+    $_SERVER['REQUEST_METHOD'] = 'DELETE';
+    $_SERVER['REQUEST_URI'] = '/users/non-existent-uuid';
+
+    $router->matchRoute();
 
     expect(http_response_code())->toBe(404);
 });
