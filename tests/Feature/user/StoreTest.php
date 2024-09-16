@@ -99,7 +99,7 @@ it('should store a user via the router', function () {
     $router = new Router();
 
     $router->addRoute('POST', '/users', function ($params) {
-        $controller = new UserController();
+        $controller = new UserController($this->pdo);
         return $controller->store($params['first_name'], $params['last_name']);
     });
 
@@ -116,7 +116,7 @@ it('is return 201 status code when store a user via the router', function () {
     $router = new Router();
 
     $router->addRoute('POST', '/users', function ($params) {
-        $controller = new UserController();
+        $controller = new UserController($this->pdo);
         return $controller->store($params['first_name'], $params['last_name']);
     });
 
@@ -133,7 +133,7 @@ it('is return 404 status code when store a user without a first name via the rou
     $router = new Router();
 
     $router->addRoute('POST', '/users', function ($params) {
-        $controller = new UserController();
+        $controller = new UserController($this->pdo);
         return $controller->store($params['first_name'], $params['last_name']);
     });
 
@@ -150,7 +150,7 @@ it('should not store a user without a last name via the router', function () {
     $router = new Router();
 
     $router->addRoute('POST', '/users', function ($params) {
-        $controller = new UserController();
+        $controller = new UserController($this->pdo);
         return $controller->store($params['first_name'], $params['last_name']);
     });
 
@@ -167,7 +167,7 @@ it('should not store a user without a last name and first name via the router', 
     $router = new Router();
 
     $router->addRoute('POST', '/users', function ($params) {
-        $controller = new UserController();
+        $controller = new UserController($this->pdo);
         return $controller->store($params['first_name'], $params['last_name']);
     });
 
