@@ -4,6 +4,7 @@ use App\Dto\UserCreateDto;
 use App\Http\Controllers\UserController;
 use App\Repositories\UserRepository;
 use App\Services\UserService;
+use Routes\Router;
 
 beforeEach(function () {
     $users = [];
@@ -268,4 +269,20 @@ it('is return a 200 status code when user does exist', function () {
     $controller->index('Sasha', 'Ketchum');
 
     expect(http_response_code())->toBe(200);
+});
+
+it('should find all users via the router', function () {
+    $router = new Router();
+
+    $router->addRoute('GET', '/users', function () {
+        $controller = new UserController($this->pdo);
+        return $controller->index();
+    });
+
+    $_SERVER['REQUEST_METHOD'] = 'GET';
+    $_SERVER['REQUEST_URI'] = '/users';
+
+    $response = $router->matchRoute();
+
+    expect(json_decode($response, true))->toHaveCount(4);
 });
