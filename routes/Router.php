@@ -14,21 +14,28 @@ final class Router
     }
 
     public function matchRoute() {
-
         // Don't try to run this code in the CLI environment
-        if (php_sapi_name() !== 'cli') {
+        if (php_sapi_name() !== 'cli' || getenv('APP_ENV') === 'testing') {
             $method = $_SERVER['REQUEST_METHOD'];
-            $url = $_SERVER['REQUEST_URI'];
-
+            $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+            $queryParams = $_GET;
 
             if (isset($this->routes[$method])) {
                 foreach ($this->routes[$method] as $routeUrl => $target) {
-                    if ($routeUrl === $url) {
-                        return call_user_func($target);
+                    $routePattern = preg_replace('/\{([a-zA-Z0-9_]+)\}/', '([a-zA-Z0-9_-]+)', $routeUrl);
+                    // The # character is used as a delimiter instead of the usual / character to avoid escaping the / character in the regex
+                    $routePattern = '#^' . $routePattern . '$#';
+
+                    if (preg_match($routePattern, $uri, $matches)) {
+                        array_shift($matches);
+
+                        return call_user_func_array($target, array_merge($matches, [$queryParams]));
                     }
                 }
             }
+
             return Json::response(['message' => 'Route not found'], 404);
         }
     }
+
 }
