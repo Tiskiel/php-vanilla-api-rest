@@ -4,6 +4,7 @@ use App\Dto\UserCreateDto;
 use App\Http\Controllers\UserController;
 use App\Repositories\UserRepository;
 use App\Services\UserService;
+use Routes\Router;
 
 it('should store a user', function () {
     $userCreateDto = new UserCreateDto('John', 'Doe');
@@ -92,4 +93,90 @@ it('is return 404 status code when store a user without a first name via the con
     $controller->store('', 'Doe');
 
     expect(http_response_code())->toBe(404);
+});
+
+it('should store a user via the router', function () {
+    $router = new Router();
+
+    $router->addRoute('POST', '/users', function ($params) {
+        $controller = new UserController();
+        return $controller->store($params['first_name'], $params['last_name']);
+    });
+
+    $_SERVER['REQUEST_METHOD'] = 'POST';
+    $_SERVER['REQUEST_URI'] = '/users';
+    $_POST = ['first_name' => 'Sacha', 'last_name' => 'Ketchum'];
+
+    $response = $router->matchRoute();
+
+    expect(json_decode($response, true)['message'])->toBe('User created successfully');
+});
+
+it('is return 201 status code when store a user via the router', function () {
+    $router = new Router();
+
+    $router->addRoute('POST', '/users', function ($params) {
+        $controller = new UserController();
+        return $controller->store($params['first_name'], $params['last_name']);
+    });
+
+    $_SERVER['REQUEST_METHOD'] = 'POST';
+    $_SERVER['REQUEST_URI'] = '/users';
+    $_POST = ['first_name' => 'Sacha', 'last_name' => 'Ketchum'];
+
+    $router->matchRoute();
+
+    expect(http_response_code())->toBe(201);
+});
+
+it('is return 404 status code when store a user without a first name via the router', function () {
+    $router = new Router();
+
+    $router->addRoute('POST', '/users', function ($params) {
+        $controller = new UserController();
+        return $controller->store($params['first_name'], $params['last_name']);
+    });
+
+    $_SERVER['REQUEST_METHOD'] = 'POST';
+    $_SERVER['REQUEST_URI'] = '/users';
+    $_POST = ['first_name' => '', 'last_name' => 'Ketchum'];
+
+    $router->matchRoute();
+
+    expect(http_response_code())->toBe(404);
+});
+
+it('should not store a user without a last name via the router', function () {
+    $router = new Router();
+
+    $router->addRoute('POST', '/users', function ($params) {
+        $controller = new UserController();
+        return $controller->store($params['first_name'], $params['last_name']);
+    });
+
+    $_SERVER['REQUEST_METHOD'] = 'POST';
+    $_SERVER['REQUEST_URI'] = '/users';
+    $_POST = ['first_name' => 'Sacha', 'last_name' => ''];
+
+    $response = $router->matchRoute();
+
+    expect(json_decode($response, true)['errors']['last_name'])->toBe('Last name is required');
+});
+
+it('should not store a user without a last name and first name via the router', function () {
+    $router = new Router();
+
+    $router->addRoute('POST', '/users', function ($params) {
+        $controller = new UserController();
+        return $controller->store($params['first_name'], $params['last_name']);
+    });
+
+    $_SERVER['REQUEST_METHOD'] = 'POST';
+    $_SERVER['REQUEST_URI'] = '/users';
+    $_POST = ['first_name' => '', 'last_name' => ''];
+
+    $response = $router->matchRoute();
+
+    expect(json_decode($response, true)['errors']['first_name'])->toBe('First name is required');
+    expect(json_decode($response, true)['errors']['last_name'])->toBe('Last name is required');
 });
