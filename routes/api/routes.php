@@ -22,5 +22,10 @@ $router->addRoute('PUT', '/users/{uuid}', function ($uuid, $params) {
     return $controller->update($uuid, $params['first_name'], $params['last_name']);
 });
 
+$router->addRoute('DELETE', '/users/{uuid}', function ($uuid) {
+    $controller = new UserController();
+    return $controller->delete($uuid);
+});
+
 $response = $router->matchRoute();
 echo $response;
