@@ -17,5 +17,10 @@ $router->addRoute('POST', '/users', function ($params) {
     return $controller->store($params['first_name'], $params['last_name']);
 });
 
+$router->addRoute('PUT', '/users/{uuid}', function ($uuid, $params) {
+    $controller = new UserController();
+    return $controller->update($uuid, $params['first_name'], $params['last_name']);
+});
+
 $response = $router->matchRoute();
 echo $response;
