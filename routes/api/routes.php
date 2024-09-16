@@ -12,5 +12,10 @@ $router->addRoute('GET', '/users', function () {
     return $controller->index();
 });
 
+$router->addRoute('POST', '/users', function ($params) {
+    $controller = new UserController();
+    return $controller->store($params['first_name'], $params['last_name']);
+});
+
 $response = $router->matchRoute();
 echo $response;
