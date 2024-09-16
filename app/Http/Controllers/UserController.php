@@ -34,6 +34,17 @@ final class UserController
         return Json::response($response, $status);
     }
 
+    public function show(string $uuid): string
+    {
+        $response = $this->_userService->show($uuid);
+
+        if(is_array($response) && array_key_exists('errors', $response)) {
+            return Json::response($response, 404);
+        }
+
+        return Json::response($response, 200);
+    }
+
     public function store(string $firstName, string $lastName): string
     {
         $response = $this->_userService->store($firstName, $lastName);

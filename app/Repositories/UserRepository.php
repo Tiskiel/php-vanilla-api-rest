@@ -35,7 +35,18 @@ final class UserRepository extends Repository
         return $statement->fetchAll(\PDO::FETCH_ASSOC);
     }
 
-    public function store(UserCreateDto $data): bool
+    public function show(string $uuid): array|bool|null
+    {
+        $sql = 'SELECT * FROM users WHERE uuid = :uuid';
+
+        $statement = $this->pdo->prepare($sql);
+
+        $statement->execute([':uuid' => $uuid]);
+
+        return $statement->fetch(\PDO::FETCH_ASSOC);
+    }
+
+    public function store(UserCreateDto $data): bool|null
     {
         $sql = 'INSERT INTO users (uuid, first_name, last_name) VALUES (:uuid, :first_name, :last_name)';
 
@@ -50,7 +61,7 @@ final class UserRepository extends Repository
         return $statement->rowCount() > 0;
     }
 
-    public function update(UserUpdateDto $data): bool
+    public function update(UserUpdateDto $data): bool|null
     {
         $sql = "UPDATE users SET first_name=:first_name, last_name=:last_name WHERE uuid=:uuid";
 
@@ -65,7 +76,7 @@ final class UserRepository extends Repository
         return $statement->rowCount() > 0;
     }
 
-    public function delete(string $uuid): bool
+    public function delete(string $uuid): bool|null
     {
         $sql = 'DELETE FROM users WHERE uuid = :uuid';
 

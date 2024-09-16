@@ -61,6 +61,20 @@ final class UserService
     }
 
     /**
+     * @return array<string, string>|bool
+     */
+    public function show(string $uuid): array|bool
+    {
+        if(!$this->_validatorService->exist('users', 'uuid', $uuid)) {
+            $this->errors['errors']['uuid'] = 'User not found';
+
+            return $this->errors;
+        }
+
+        return $this->_repository->show($uuid);
+    }
+
+    /**
      * @return array<string, array<string, string>>|bool
      */
     public function store(string $firstName, string $lastName): array|bool

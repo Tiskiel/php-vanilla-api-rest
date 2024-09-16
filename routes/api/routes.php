@@ -12,6 +12,11 @@ $router->addRoute('GET', '/users', function ($params) {
     return $controller->index($params['first_name'] ?? null, $params['last_name'] ?? null);
 });
 
+$router->addRoute('GET', '/users/{uuid}', function ($uuid) {
+    $controller = new UserController();
+    return $controller->show($uuid);
+});
+
 $router->addRoute('POST', '/users', function ($params) {
     $controller = new UserController();
     return $controller->store($params['first_name'], $params['last_name']);
