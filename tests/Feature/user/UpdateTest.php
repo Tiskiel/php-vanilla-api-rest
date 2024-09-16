@@ -5,6 +5,7 @@ use App\Dto\UserUpdateDto;
 use App\Http\Controllers\UserController;
 use App\Repositories\UserRepository;
 use App\Services\UserService;
+use Routes\Router;
 
 beforeEach(function () {
     $this->userDto = new UserCreateDto('John', 'Doe');
@@ -182,6 +183,57 @@ it('is return a status code of 404 when the user does not exist via the controll
     $controller = new UserController($this->pdo);
 
     $controller->update('non-existent-uuid', 'Bat', 'Man');
+
+    expect(http_response_code())->toBe(404);
+});
+
+it('should update a user via the router', function () {
+    $router = new Router();
+
+    $router->addRoute('PUT', '/users/{uuid}', function ($uuid, $params) {
+        $controller = new UserController($this->pdo);
+        return $controller->update($uuid, $params['first_name'], $params['last_name']);
+    });
+
+    $_SERVER['REQUEST_METHOD'] = 'PUT';
+    $_SERVER['REQUEST_URI'] = '/users/' . $this->userDto->getUuid();
+    $_POST = ['first_name' => 'Bat', 'last_name' => 'Man'];
+
+    $response = $router->matchRoute();
+
+    expect(json_decode($response, true)['message'])->toBe('User updated successfully');
+});
+
+it('is return 200 status code when the user is updated via the router', function () {
+    $router = new Router();
+
+    $router->addRoute('PUT', '/users/{uuid}', function ($uuid, $params) {
+        $controller = new UserController($this->pdo);
+        return $controller->update($uuid, $params['first_name'], $params['last_name']);
+    });
+
+    $_SERVER['REQUEST_METHOD'] = 'PUT';
+    $_SERVER['REQUEST_URI'] = '/users/' . $this->userDto->getUuid();
+    $_POST = ['first_name' => 'Bat', 'last_name' => 'Man'];
+
+    $router->matchRoute();
+
+    expect(http_response_code())->toBe(200);
+});
+
+it('is return 404 status code when the user does not exist via the router', function () {
+    $router = new Router();
+
+    $router->addRoute('PUT', '/users/{uuid}', function ($uuid, $params) {
+        $controller = new UserController($this->pdo);
+        return $controller->update($uuid, $params['first_name'], $params['last_name']);
+    });
+
+    $_SERVER['REQUEST_METHOD'] = 'PUT';
+    $_SERVER['REQUEST_URI'] = '/users/non-existent-uuid';
+    $_POST = ['first_name' => 'Bat', 'last_name' => 'Man'];
+
+    $router->matchRoute();
 
     expect(http_response_code())->toBe(404);
 });
