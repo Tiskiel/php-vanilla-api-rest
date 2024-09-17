@@ -14,7 +14,7 @@ After that, you need to use the token, prefixed with `Bearer ` , and set the Aut
 ### 1. Clone the repository
 
 ```bash
-https://github.com/Tiskiel/test-eonix.git
+https://github.com/Tiskiel/php-vanilla-api-rest.git
 ```
 
 ### 2. Install dependencies
