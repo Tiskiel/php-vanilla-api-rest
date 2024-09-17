@@ -25,7 +25,15 @@ Auth::init();
 $router = new Router();
 
 $router->addRoute('GET', '/', function () {
-    echo "Welcome to the api";
+    $filePath = __DIR__ . '/../../resources/views/readme.html';
+
+    if (!file_exists($filePath)) {
+        http_response_code(404);
+        return json_encode(['error' => 'File not found']);
+    }
+
+    header('Content-Type: text/html; charset=utf-8');
+    return file_get_contents($filePath);
 });
 
 $router->addRoute('POST', '/login', function ($params) {

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to my API REST in vanilla PHP</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        pre {
+            background-color: #f4f4f4;
+            padding: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Welcome to my REST API in vanilla PHP</h1>
+    <p>I opted for a clean architecture with repositories, services, and controllers.</p>
+    <p>I have limited the use of external libraries, challenging myself to build as much as possible in vanilla PHP.</p>
+    <p>For testing, I used the Pest framework, which is based on PHPUnit.</p>
+
+    <h2>How to use it</h2>
+    <p>Don't forget to set up your <code>.env</code> file based on the <code>.env.example</code>.</p>
+    <p>Once all the steps below are completed, you need to make a <code>POST</code> request to
+        <code>https://localhost:8000/login</code> to obtain a token.</p>
+    <p>After that, you need to use the token, prefixed with <code>Bearer </code>, and set the <code>Authorization</code>
+        header.</p>
+
+    <h3>1. Clone the repository</h3>
+    <pre><code>https://github.com/Tiskiel/test-eonix.git</code></pre>
+
+    <h3>2. Install dependencies</h3>
+    <pre><code>composer install</code></pre>
+
+    <h3>3. Run the migrations</h3>
+    <pre><code>composer users:migrate</code></pre>
+
+    <h3>4. Run the seeders</h3>
+    <pre><code>composer users:seed</code></pre>
+
+    <h3>5. Start the server</h3>
+    <pre><code>composer serve</code></pre>
+
+    <h3>To run the tests with Pest</h3>
+    <pre><code>composer test</code></pre>
+</body>
+
+</html>
